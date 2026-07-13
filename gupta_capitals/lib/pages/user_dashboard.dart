@@ -8,6 +8,7 @@ import 'user_queries_page.dart';
 import 'pay_rent_page.dart';
 import 'payment_history_page.dart';
 import 'notifications_page.dart';
+import 'landing_page.dart';
 
 class UserDashboard extends StatefulWidget {
   final String userId;
@@ -117,7 +118,12 @@ class _UserDashboardState extends State<UserDashboard> {
             tooltip: 'Logout',
             onPressed: () async {
               await AuthService().logout();
-              if (context.mounted) Navigator.pushReplacementNamed(context, '/');
+              if (context.mounted) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LandingPage()),
+                );
+              }
             },
           ),
         ],
