@@ -81,7 +81,7 @@ class _PayRentPageState extends State<PayRentPage> {
       final response = await http.post(
         Uri.parse('$_baseUrl/api/payment/request'),
         headers: {'Content-Type': 'application/json'},
-   body: jsonEncode({
+        body: jsonEncode({
   'userId': widget.userId,
   'userName': _user!['name'],
   'mobile': _user!['mobile'],
@@ -91,6 +91,7 @@ class _PayRentPageState extends State<PayRentPage> {
   'totalPaid': _rentInfo!['totalDue'],
   'dueDate': _rentInfo!['dueDate'],
   'cycleStart': _rentInfo!['cycleStart'],
+  'periodEnd': _rentInfo!['periodEnd'],
   'cycleMonthLabel': _rentInfo!['cycleMonthLabel'],
 }),
       ).timeout(const Duration(seconds: 8));

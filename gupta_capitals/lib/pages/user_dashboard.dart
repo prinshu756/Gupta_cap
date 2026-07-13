@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'user_info_page.dart';
 import 'user_queries_page.dart';
 import 'pay_rent_page.dart';
+import 'payment_history_page.dart';
 class UserDashboard extends StatelessWidget {
   final String userId;
   final String userName;
@@ -166,13 +167,16 @@ class UserDashboard extends StatelessWidget {
                   ).showSnackBar(const SnackBar(content: Text('Coming soon!'))),
                 ),
                 _ActionCard(
-                  icon: Icons.history_outlined,
-                  label: 'Payment History',
-                  color: const Color(0xFFD4A843),
-                  onTap: () => ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text('Coming soon!'))),
-                ),
+  icon: Icons.history_outlined,
+  label: 'Payment History',
+  color: const Color(0xFFD4A843),
+  onTap: () => Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => PaymentHistoryPage(userId: userId, userName: userName),
+    ),
+  ),
+),
               ],
             ),
           ],

@@ -11,4 +11,6 @@ router.post("/request", createPaymentRequest);
 router.post("/verify/:requestId", verifyPaymentRequest);
 router.get("/status/:userId", getPaymentStatus);
 router.get('/tenant-requests/:userId', getTenantPaymentRequests);
+
+router.get('/history/:userId', getTenantPaymentRequests);
 module.exports = router;
