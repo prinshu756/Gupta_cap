@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,11 +24,7 @@ class AuthService {
   bool get isLoggedIn => _token != null;
   bool get isAdmin => _role == 'admin';
 
-  String get baseUrl {
-    if (kIsWeb) return 'http://localhost:3000';
-    if (defaultTargetPlatform == TargetPlatform.android) return 'http://10.0.2.2:3000';
-    return 'http://127.0.0.1:3000';
-  }
+  String get baseUrl => 'https://gupta-cap.onrender.com';
 
   Map<String, String> get headers => {
     'Content-Type': 'application/json',

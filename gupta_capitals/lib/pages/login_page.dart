@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../services/auth_service.dart';
@@ -21,11 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscure = true;
   bool _isLoading = false;
 
-  String get _baseUrl {
-    if (kIsWeb) return 'http://localhost:3000';
-    if (defaultTargetPlatform == TargetPlatform.android) return 'http://10.0.2.2:3000';
-    return 'http://127.0.0.1:3000';
-  }
+  String get _baseUrl => 'https://gupta-cap.onrender.com';
 
   @override
   void dispose() {
