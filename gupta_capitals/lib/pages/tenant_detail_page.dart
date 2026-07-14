@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import 'payment_history_page.dart';
+
 
 class TenantDetailPage extends StatefulWidget {
   final String tenantId;
@@ -18,6 +20,7 @@ class TenantDetailPage extends StatefulWidget {
 }
 
 class _TenantDetailPageState extends State<TenantDetailPage> {
+  
   final _formKey = GlobalKey<FormState>();
   final _monthlyRentController = TextEditingController();
   final _penaltyStartDayController = TextEditingController();
@@ -84,6 +87,49 @@ class _TenantDetailPageState extends State<TenantDetailPage> {
       if (mounted) setState(() => _verifyingRequestId = null);
     }
   }
+
+
+
+  Future<void> _deleteTenant() async {
+  final confirm = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text('Delete Tenant'),
+      content: Text('Are you sure you want to permanently delete ${widget.tenantName}? This will remove all their data including rent config and payment history.'),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, true),
+          child: const Text('Delete', style: TextStyle(color: Colors.red)),
+        ),
+      ],
+    ),
+  );
+
+  if (confirm != true) return;
+
+  try {
+  final response = await AuthService().delete('/api/admin/tenants/deleted/${widget.tenantId}');
+
+  if (!mounted) return;
+  final data = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(data['message'] ?? 'Tenant deleted')),
+      );
+      Navigator.pop(context, true); // Go back to dashboard, signal refresh needed
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(data['message'] ?? 'Failed to delete tenant')),
+      );
+    }
+  } catch (e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $e')),
+    );
+  }
+}
 
   @override
   void dispose() {
@@ -166,10 +212,30 @@ class _TenantDetailPageState extends State<TenantDetailPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F4EF),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A3A5C),
-        foregroundColor: Colors.white,
-        title: Text(widget.tenantName, style: const TextStyle(fontWeight: FontWeight.w700)),
+  backgroundColor: const Color(0xFF1A3A5C),
+  foregroundColor: Colors.white,
+  title: Text(widget.tenantName, style: const TextStyle(fontWeight: FontWeight.w700)),
+  actions: [
+    IconButton(
+      icon: const Icon(Icons.history),
+      tooltip: 'Payment History',
+      onPressed: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PaymentHistoryPage(
+            userId: widget.tenantId,
+            userName: widget.tenantName,
+          ),
+        ),
       ),
+    ),
+    IconButton(
+      icon: const Icon(Icons.delete_outline),
+      tooltip: 'Delete Tenant',
+      onPressed: _deleteTenant,
+    ),
+  ],
+),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
            : SingleChildScrollView(

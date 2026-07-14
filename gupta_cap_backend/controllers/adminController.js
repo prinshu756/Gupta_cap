@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const { generateToken } = require('../middleware/auth');
+const RentConfig = require('../models/RentConfig');
+const PaymentRequest = require('../models/PaymentRequest');
 
 const adminLogin = async (req, res) => {
   try {
@@ -38,4 +40,23 @@ const getAllTenants = async (req, res) => {
   }
 };
 
-module.exports = { adminLogin, getAllTenants };
+// @route DELETE /api/admin/tenants/:userId
+const deleteTenant = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'Tenant not found' });
+
+    await User.findByIdAndDelete(userId);
+    await RentConfig.deleteMany({ userId });
+    await PaymentRequest.deleteMany({ userId });
+
+    res.json({ message: 'Tenant deleted successfully' });
+  } catch (error) {
+    console.error('DELETE TENANT ERROR:', error);
+    res.status(500).json({ message: 'Failed to delete tenant', error: error.message });
+  }
+};
+
+module.exports = { adminLogin, getAllTenants ,deleteTenant };

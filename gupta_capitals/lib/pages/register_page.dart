@@ -33,20 +33,26 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> _fetchFloors() async {
-    try {
-      final response = await AuthService().get('/api/floor-configs', retries: 1);
-      if (!mounted) return;
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        setState(() {
-          _floors = data['floors'] ?? [];
-          _isLoadingFloors = false;
-        });
-      }
-    } catch (_) {
-      if (mounted) setState(() => _isLoadingFloors = false);
+  try {
+    final response = await AuthService().get('/api/floor-configs');
+    if (!mounted) return;
+    print('FLOOR CONFIG STATUS: ${response.statusCode}');
+    print('FLOOR CONFIG BODY: ${response.body}');
+    final data = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      setState(() {
+        _floors = data['floors'] ?? [];
+        _isLoadingFloors = false;
+      });
+    } else {
+      setState(() => _isLoadingFloors = false);
     }
+  } catch (e) {
+    print('FLOOR CONFIG ERROR: $e');
+    if (mounted) setState(() => _isLoadingFloors = false);
   }
+}  
+
 
   List<String> get _floorNames => _floors.map((f) => f['floor'] as String).toList();
 

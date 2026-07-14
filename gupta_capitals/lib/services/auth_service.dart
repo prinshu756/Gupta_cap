@@ -96,6 +96,15 @@ class AuthService {
     }, retries);
   }
 
+  Future<http.Response> delete(String path, {Map<String, dynamic>? body, Map<String, String>? extraHeaders, int retries = 2}) async {
+  return _withRetry(() async {
+    final uri = Uri.parse('$baseUrl$path');
+    final allHeaders = {...headers, ...?extraHeaders};
+    return http.delete(uri, headers: allHeaders, body: body != null ? jsonEncode(body) : null)
+        .timeout(const Duration(seconds: 60));
+  }, retries);
+}
+
   Future<http.Response> _withRetry(Future<http.Response> Function() fn, int retries) async {
     for (int i = 0; i <= retries; i++) {
       try {
